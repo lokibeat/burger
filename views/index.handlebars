@@ -1,24 +1,53 @@
-<h1>Burgers!</h1>
-
-<h2>Burgers that are not eaten!</h2>
+<div class="container">	
+	<div class="jumbotron"> 
+	<img src="/assets/images/Burger.png" width="200" height="200">
+<h1>Eat the Hamburger!</h1>
+	</div>
+{{!-- section for burger menu --}}
+<div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+<h2>Hamburgers ready to eat!</h2>
 
 <ul>
   {{#each burgers}}
   	<li>
         {{#unless devoured}}
-  	   <p>ID: {{this.id}}</p>
-       <p>Burger: {{this.burger_name}}</p>
-       <p>Devoured: {{this.devoured}}</p>
-       {{/unless}}
+  	   <p>{{this.id}} {{this.burger_name}} <button type="submit" data-id="{{this.id}}" class="btn btn-warning btn-xs" id="devour">Eat me!</button></p>
+
+        {{/unless}}
   	</li>
   {{/each}}
 </ul>
 
+    </div>
+  
+{{!-- section for eaten burgers --}}
+ 
+      <div class="col-sm-6">
+        <div class='eatenBurger'>
+<h2>Hamburgers already eaten!</h2>
+
+<ul>
+  {{#each burgers}}
+  	<li>
+        {{#if devoured}}
+  	   <p>{{this.id}} {{this.burger_name}}</p>
+        {{/if}}
+  	</li>
+  {{/each}}
+</ul>
+        </div>
+    </div>
+ 
+
+<div class="col-md-10 col-md-offset-1" id="addburgersection">
 <h2>Add a Burger</h2>
 <form id="addburger" class="button-size">
 	<textarea type="text" name="burger_name"></textarea>
 	<button type="submit">Make Burger!</button>
 </form>
+</div>
 
 <script type="text/javascript">
 $("#addburger").on("submit", function(event) {
@@ -41,6 +70,24 @@ $("#addburger").on("submit", function(event) {
         location.reload();
       }
     );
-  });
+});
+
+$("#devour").on("click", function(event){
+    var id = $(this).data("id");
+    var state =  {devoured : true};
+console.log("send update" + id + state)
+//send devour updates
+  $.ajax("/api/burgers/" + id, {
+    type: "PUT",
+    data: state
+  }).then(
+      function() {
+        console.log("set burger to devoured");
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  }
+  )
 
   </script>
